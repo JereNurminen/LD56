@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Mono.Cecil;
 using NUnit.Framework.Constraints;
 using Unity.VisualScripting;
@@ -5,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
+using UnityEngine.XR;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private float verticalVelocity;
     private float horizontalVelocity;
     private bool isGrounded;
+    private bool isJumping;
 
     private InputAction moveAction;
     private InputAction jumpAction;
@@ -40,99 +43,70 @@ public class PlayerController : MonoBehaviour
         stopAction = InputSystem.actions.FindAction("Command: Stop");
     }
 
-    void Update()
+    void HandleMovement()
     {
-        var groundCollisions = collisionDetector.CheckForGround();
-        var wasGrounded = isGrounded;
-
-        /*
-        *  Update inputs
-        */
         var moveValue = moveAction.ReadValue<Vector2>().x;
-        var jumpTriggered = jumpAction.triggered;
-
-        /*
-        *  Ground check & Coyote time
-        */
-        if (groundCollisions.Length > 0)
-        {
-            coyoteTimeCounter = coyoteTime;
-            isGrounded = true;
-        }
-        else
-        {
-            coyoteTimeCounter -= Time.deltaTime;
-            verticalVelocity = Mathf.Max(
-                verticalVelocity - fallAcceleration * Time.deltaTime,
-                -maxFallSpeed
-            );
-        }
-
-        /*
-        *  Jump handling
-        */
-        if (jumpTriggered && coyoteTimeCounter > 0)
-        {
-            Debug.Log("Jump");
-            verticalVelocity = jumpSpeed;
-            coyoteTimeCounter = 0;
-        }
-
-        /*
-        *  Horizontal movement
-        */
         if (moveValue.CompareTo(0) != 0)
         {
             var movement = moveValue > 0 ? Vector2.right : Vector2.left;
             horizontalVelocity = movement.x * moveSpeed * Time.deltaTime;
         }
+    }
 
-        /*
-        * Apply gravity
-        */
-        if (!isGrounded)
+    private void HandleJump()
+    {
+        if (isGrounded && jumpAction.triggered && coyoteTimeCounter > 0f)
         {
-            verticalVelocity = Mathf.Max(
-                verticalVelocity - fallAcceleration * Time.deltaTime,
-                -maxFallSpeed
-            );
+            isJumping = true;
+            verticalVelocity = jumpSpeed;
+            coyoteTimeCounter = 0f;
         }
+    }
 
-        /*
-        *  Apply velocities
-        */
-        var predictedPosition = rb.position + new Vector2(horizontalVelocity, verticalVelocity);
-
-        transform.position = predictedPosition;
-
-        /*
-        * Check for ground hits afte applying vertical velocity
-        */
-        var groundHits = Physics2D.BoxCastAll(
-            col.bounds.center,
-            col.bounds.size,
-            0,
-            Vector2.down,
-            verticalVelocity,
-            collisionDetector.groundLayer
-        );
-        if (groundHits.Length > 0)
+    private void HandleGravity()
+    {
+        if (collisionDetector.IsGroundedBox())
         {
-            var closestHit = groundHits[0];
-            foreach (var hit in groundHits)
+            coyoteTimeCounter = coyoteTime;
+            if (isJumping && verticalVelocity <= 0)
             {
-                if (hit.distance < closestHit.distance)
-                {
-                    closestHit = hit;
-                }
+                isJumping = false;
+                verticalVelocity = 0f;
             }
-
-            verticalVelocity = 0;
-            transform.position = new Vector2(
-                transform.position.x,
-                closestHit.point.y + col.bounds.size.y / 2
-            );
         }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+            verticalVelocity -= fallAcceleration * Time.deltaTime;
+        }
+
+        // Predict the character's new position
+        Vector2 predictedPosition =
+            transform.position + new Vector3(0, verticalVelocity * Time.deltaTime);
+
+        Vector2 castOrig = new(col.bounds.center.x, col.bounds.min.y);
+        Vector2 castTarget =
+            new(predictedPosition.x, predictedPosition.y - col.bounds.size.y / 2 - 1);
+        var hit = Physics2D.Linecast(castOrig, castTarget, collisionDetector.groundLayer);
+
+        Debug.DrawLine(castOrig, castTarget, Color.green);
+        if (hit.collider != null && verticalVelocity < 0)
+        {
+            Debug.DrawLine(castOrig, hit.point, Color.red, 5);
+            // Snap character to the ground if a collision is detected
+            predictedPosition.y = hit.point.y + (col.bounds.size.y / 2) - col.offset.y;
+            verticalVelocity = 0f;
+        }
+
+        // Move the character on the y-axis
+        transform.position = new Vector2(transform.position.x, predictedPosition.y);
+    }
+
+    void Update()
+    {
+        HandleMovement();
+        HandleJump();
+        HandleGravity();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -4,37 +4,24 @@ using UnityEngine;
 public class CollisionDetector2D : MonoBehaviour
 {
     public LayerMask groundLayer;
-    public float groundCheckDistance = 1f;
-    public float wallCheckDistance = 1f;
+    public float groundCheckDistance = 0.1f;
+    public float wallCheckDistance = 0.1f;
 
     private Collider2D col;
-    private RaycastHit2D[] hits;
 
     void Start()
     {
         col = GetComponent<Collider2D>();
     }
 
-    public RaycastHit2D[] CheckForGround()
+    public bool IsGroundedBox()
     {
-        hits = Physics2D.BoxCastAll(
-            col.bounds.center,
-            new Vector2(col.bounds.size.x, col.bounds.size.y + groundCheckDistance),
-            0,
-            Vector2.down,
-            groundCheckDistance,
-            groundLayer
+        Vector2 boxCenter = new Vector2(
+            col.bounds.center.x,
+            col.bounds.min.y - groundCheckDistance / 2
         );
-        return hits;
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(
-            col.bounds.center,
-            new Vector3(col.bounds.size.x, col.bounds.size.y + groundCheckDistance, 1)
-        );
+        Vector2 boxSize = new Vector2(col.bounds.size.x, groundCheckDistance);
+        return Physics2D.OverlapBox(boxCenter, boxSize, 0, groundLayer) != null;
     }
 
     public bool IsTouchingWall(float direction)
