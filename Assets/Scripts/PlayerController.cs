@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float fallAcceleration = 4f; // Units (pixels) per second
     public float maxFallSpeed = 8f; // Units (pixels) per second
     public float commandRange = 128f;
+    public Vector2 speechBubbleOffset = new Vector2(0, 1);
 
     private Rigidbody2D rb;
     private Collider2D col;
@@ -35,6 +36,8 @@ public class PlayerController : MonoBehaviour
 
     private SheepController[] sheepControllers;
     private Animator animator;
+    private Animator speechBubbleAnimator;
+    private bool commandReady = true;
 
     void Start()
     {
@@ -43,6 +46,7 @@ public class PlayerController : MonoBehaviour
         collisionDetector = GetComponent<CollisionDetector2D>();
         sheepControllers = FindObjectsByType<SheepController>(FindObjectsSortMode.None);
         animator = GetComponent<Animator>();
+        speechBubbleAnimator = transform.Find("Command Bubble").GetComponent<Animator>();
 
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
@@ -137,20 +141,33 @@ public class PlayerController : MonoBehaviour
 
     void HandleCommands()
     {
+        if (!commandReady)
+        {
+            return;
+        }
         if (goAction.triggered)
         {
+            speechBubbleAnimator.SetTrigger("go");
             foreach (var sheepController in FindSheepInRange())
             {
                 sheepController.ReceiveCommand(SheepCommand.Go, transform.position);
             }
+            commandReady = false;
         }
         if (stopAction.triggered)
         {
+            speechBubbleAnimator.SetTrigger("stop");
             foreach (var sheepController in FindSheepInRange())
             {
                 sheepController.ReceiveCommand(SheepCommand.Stop, transform.position);
             }
+            commandReady = false;
         }
+    }
+
+    public void OnCommandAnimationComplete()
+    {
+        commandReady = true;
     }
 
     SheepController[] FindSheepInRange()

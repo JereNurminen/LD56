@@ -95,7 +95,6 @@ public class SheepController : MonoBehaviour
     void Go(Vector2 moveAwayFrom)
     {
         direction = transform.position.x > moveAwayFrom.x ? 1 : -1;
-        transform.localScale = new Vector2(direction, 1);
     }
 
     void Stop() { }
@@ -157,6 +156,11 @@ public class SheepController : MonoBehaviour
             horizontalVelocity = direction * moveSpeed * Time.deltaTime;
             transform.Translate(horizontalVelocity, 0, 0);
         }
+        else if (!isGrounded)
+        {
+            //direction *= -1;
+        }
+        transform.localScale = new Vector2(direction, 1);
         DetectLedge();
     }
 
