@@ -40,4 +40,14 @@ public class CollisionDetector2D : MonoBehaviour
 
         return false;
     }
+
+    public bool IsTouchingCeiling()
+    {
+        Vector2 boxCenter = new Vector2(
+            col.bounds.center.x,
+            col.bounds.max.y + groundCheckDistance / 2
+        );
+        Vector2 boxSize = new Vector2(col.bounds.size.x, groundCheckDistance);
+        return Physics2D.OverlapBox(boxCenter, boxSize, 0, groundLayer) != null;
+    }
 }

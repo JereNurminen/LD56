@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using Mono.Cecil;
 using NUnit.Framework.Constraints;
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public float coyoteTime = 0.2f; // Coyote time duration
     public float fallAcceleration = 4f; // Units (pixels) per second
     public float maxFallSpeed = 8f; // Units (pixels) per second
+    public float commandRange = 128f;
 
     private Rigidbody2D rb;
     private Collider2D col;
@@ -24,18 +26,23 @@ public class PlayerController : MonoBehaviour
     private float verticalVelocity;
     private float horizontalVelocity;
     private bool isGrounded;
-    private bool isJumping;
+    private bool jumpThisFrame;
 
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction goAction;
     private InputAction stopAction;
 
+    private SheepController[] sheepControllers;
+    private Animator animator;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         collisionDetector = GetComponent<CollisionDetector2D>();
+        sheepControllers = FindObjectsByType<SheepController>(FindObjectsSortMode.None);
+        animator = GetComponent<Animator>();
 
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
@@ -49,7 +56,32 @@ public class PlayerController : MonoBehaviour
         if (moveValue.CompareTo(0) != 0)
         {
             var movement = moveValue > 0 ? Vector2.right : Vector2.left;
+
+            if (movement.x > 0)
+            {
+                transform.localScale = new Vector2(1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector2(-1, 1);
+            }
+
             horizontalVelocity = movement.x * moveSpeed * Time.deltaTime;
+
+            if (collisionDetector.IsTouchingWall(movement.x))
+            {
+                horizontalVelocity = 0;
+            }
+            else
+            {
+                transform.Translate(horizontalVelocity, 0, 0);
+            }
+
+            animator.SetBool("is_running", true);
+        }
+        else
+        {
+            animator.SetBool("is_running", false);
         }
     }
 
@@ -57,30 +89,33 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded && jumpAction.triggered && coyoteTimeCounter > 0f)
         {
-            isJumping = true;
+            jumpThisFrame = true;
             verticalVelocity = jumpSpeed;
             coyoteTimeCounter = 0f;
+
+            animator.SetTrigger("jump");
+        }
+        else
+        {
+            jumpThisFrame = false;
         }
     }
 
     private void HandleGravity()
     {
-        if (collisionDetector.IsGroundedBox())
+        if (collisionDetector.IsGroundedBox() && verticalVelocity.CompareTo(0) <= 0)
         {
             coyoteTimeCounter = coyoteTime;
-            if (isJumping && verticalVelocity <= 0)
-            {
-                isJumping = false;
-                verticalVelocity = 0f;
-            }
+            verticalVelocity = 0f;
+            isGrounded = true;
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
             verticalVelocity -= fallAcceleration * Time.deltaTime;
+            isGrounded = false;
         }
 
-        // Predict the character's new position
         Vector2 predictedPosition =
             transform.position + new Vector3(0, verticalVelocity * Time.deltaTime);
 
@@ -89,10 +124,8 @@ public class PlayerController : MonoBehaviour
             new(predictedPosition.x, predictedPosition.y - col.bounds.size.y / 2 - 1);
         var hit = Physics2D.Linecast(castOrig, castTarget, collisionDetector.groundLayer);
 
-        Debug.DrawLine(castOrig, castTarget, Color.green);
         if (hit.collider != null && verticalVelocity < 0)
         {
-            Debug.DrawLine(castOrig, hit.point, Color.red, 5);
             // Snap character to the ground if a collision is detected
             predictedPosition.y = hit.point.y + (col.bounds.size.y / 2) - col.offset.y;
             verticalVelocity = 0f;
@@ -102,11 +135,49 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector2(transform.position.x, predictedPosition.y);
     }
 
+    void HandleCommands()
+    {
+        if (goAction.triggered)
+        {
+            foreach (var sheepController in FindSheepInRange())
+            {
+                sheepController.ReceiveCommand(SheepCommand.Go, transform.position);
+            }
+        }
+        if (stopAction.triggered)
+        {
+            foreach (var sheepController in FindSheepInRange())
+            {
+                sheepController.ReceiveCommand(SheepCommand.Stop, transform.position);
+            }
+        }
+    }
+
+    SheepController[] FindSheepInRange()
+    {
+        var sheepInRange = new List<SheepController>();
+        foreach (var sheepController in sheepControllers)
+        {
+            if (
+                Vector2.Distance(sheepController.transform.position, transform.position)
+                < commandRange
+            )
+            {
+                sheepInRange.Add(sheepController);
+            }
+        }
+        return sheepInRange.ToArray();
+    }
+
     void Update()
     {
         HandleMovement();
         HandleJump();
         HandleGravity();
+        HandleCommands();
+
+        animator.SetFloat("vertical_speed", verticalVelocity);
+        animator.SetBool("is_grounded", isGrounded);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
