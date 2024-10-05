@@ -14,7 +14,7 @@ TagManager:
   - Player
   - Sheep
   - Level
-  - 
+  - Hazards
   - 
   - 
   - 
@@ -40,6 +40,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1436894501
+    locked: 0
+  - name: Level
+    uniqueID: 30668767
     locked: 0
   - name: Player
     uniqueID: 3128486537

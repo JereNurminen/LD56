@@ -1,3 +1,4 @@
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Scripting.APIUpdating;
@@ -16,6 +17,7 @@ public class SheepController : MonoBehaviour
     public float jumpSpeed = 10f;
     public float fallAcceleration = 4f;
     public LayerMask obstacleLayers;
+    public LayerMask hazardLayers;
 
     private float horizontalVelocity = 0;
     private float verticalVelocity = 0;
@@ -25,6 +27,7 @@ public class SheepController : MonoBehaviour
     private float timeSinceCommand = 0;
     private bool isGrounded = true;
     private bool isJumping = false;
+    private bool isAlive = true;
 
     private CollisionDetector2D collisionDetector;
     private Collider2D col;
@@ -164,9 +167,34 @@ public class SheepController : MonoBehaviour
         DetectLedge();
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log(collision.gameObject.name);
+        if (hazardLayers == (hazardLayers | (1 << collision.gameObject.layer)))
+        {
+            OnHazardHit();
+        }
+    }
+
+    public void OnHazardHit()
+    {
+        animator.SetTrigger("die");
+        isAlive = false;
+    }
+
+    public void Kill()
+    {
+        Destroy(gameObject);
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive)
+        {
+            return;
+        }
+
         HandleGravity();
 
         timeSinceCommand += Time.deltaTime;

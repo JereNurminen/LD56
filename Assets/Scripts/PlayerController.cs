@@ -34,7 +34,6 @@ public class PlayerController : MonoBehaviour
     private InputAction goAction;
     private InputAction stopAction;
 
-    private SheepController[] sheepControllers;
     private Animator animator;
     private Animator speechBubbleAnimator;
     private bool commandReady = true;
@@ -44,7 +43,6 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         collisionDetector = GetComponent<CollisionDetector2D>();
-        sheepControllers = FindObjectsByType<SheepController>(FindObjectsSortMode.None);
         animator = GetComponent<Animator>();
         speechBubbleAnimator = transform.Find("Command Bubble").GetComponent<Animator>();
 
@@ -170,10 +168,16 @@ public class PlayerController : MonoBehaviour
         commandReady = true;
     }
 
+    SheepController[] FindSheep()
+    {
+        var sheepControllers = FindObjectsOfType<SheepController>();
+        return sheepControllers;
+    }
+
     SheepController[] FindSheepInRange()
     {
         var sheepInRange = new List<SheepController>();
-        foreach (var sheepController in sheepControllers)
+        foreach (var sheepController in FindSheep())
         {
             if (
                 Vector2.Distance(sheepController.transform.position, transform.position)
