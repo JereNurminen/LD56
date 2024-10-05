@@ -53,5 +53,8 @@ TagManager:
   - name: Sheep
     uniqueID: 3056450775
     locked: 0
+  - name: Effects
+    uniqueID: 1999896031
+    locked: 0
   m_RenderingLayers:
   - Default
