@@ -13,7 +13,10 @@ public class CameraController : MonoBehaviour
     {
         playerController = FindObjectOfType<PlayerController>();
         // Find the LevelManager
-        cameraBounds = GameObject.Find("Level Manager").GetComponent<BoxCollider2D>();
+        cameraBounds = GameObject
+            .Find("Level Manager")
+            .GetComponent<LevelManager>()
+            .GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame

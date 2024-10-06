@@ -106,8 +106,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 32
   memoryDuration: 15
-  jumpSpeed: 32
-  fallAcceleration: 32
+  shortJumpSpeed: 16
+  longJumpSpeed: 42
+  fallAcceleration: 42
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 384

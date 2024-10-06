@@ -16,7 +16,7 @@ TagManager:
   - Level
   - Hazards
   - Goal
-  - 
+  - Player Death Zone
   - 
   - 
   - 
@@ -46,6 +46,9 @@ TagManager:
     locked: 0
   - name: Level
     uniqueID: 30668767
+    locked: 0
+  - name: Hazards
+    uniqueID: 799637437
     locked: 0
   - name: Player
     uniqueID: 3128486537

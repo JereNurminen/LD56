@@ -102,7 +102,7 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3739191267106350950}
   m_BodyType: 1
-  m_Simulated: 0
+  m_Simulated: 1
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
@@ -185,6 +185,9 @@ MonoBehaviour:
   maxFallSpeed: 16
   commandRange: 128
   speechBubbleOffset: {x: 0, y: 1}
+  hazardLayers:
+    serializedVersion: 2
+    m_Bits: 2560
 --- !u!114 &7494494995748441181
 MonoBehaviour:
   m_ObjectHideFlags: 0

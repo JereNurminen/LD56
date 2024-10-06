@@ -29,6 +29,7 @@ public class LevelManager : MonoBehaviour
     private SlideInController levelDoneScreen;
     private SlideInController failScreen;
     private SlideInController gameDoneScreen;
+    public BoxCollider2D levelBounds;
     private BoxCollider2D endZone;
     private SheepController[] sheepControllers;
     private int initialSheepCount = 0;
@@ -41,6 +42,7 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        levelBounds = GetComponent<BoxCollider2D>();
         endZone = GameObject.Find("End Zone").GetComponent<BoxCollider2D>();
         cameraController = FindFirstObjectByType<CameraController>();
         sheepControllers = FindObjectsByType<SheepController>(FindObjectsSortMode.None);
@@ -84,23 +86,33 @@ public class LevelManager : MonoBehaviour
             cameraController.isEnabled = false;
             if (nextLevel != null)
             {
-                Debug.Log("Level complete!");
                 levelDoneScreen.SlideIn(() => readyForNextLevel = true);
                 levelState = LevelState.LevelDone;
             }
             else
             {
-                Debug.Log("Game complete!");
                 gameDoneScreen.SlideIn();
                 levelState = LevelState.GameDone;
             }
         }
         else if (sheepStatuses.All(sheepStatus => sheepStatus != SheepStatus.Alive))
         {
-            cameraController.isEnabled = false;
-            Debug.Log("Level failed!");
-            failScreen.SlideIn(() => readyForNextLevel = true);
-            levelState = LevelState.GameOver;
+            FailLevel();
+        }
+    }
+
+    private void FailLevel()
+    {
+        cameraController.isEnabled = false;
+        failScreen.SlideIn(() => readyForNextLevel = true);
+        levelState = LevelState.GameOver;
+    }
+
+    public void OnPlayerDeath()
+    {
+        if (levelState == LevelState.Playing)
+        {
+            FailLevel();
         }
     }
 
@@ -108,7 +120,7 @@ public class LevelManager : MonoBehaviour
     void Update()
     {
         // restart level if any key is pressed once ready for next level
-        if (readyForNextLevel && Input.anyKeyDown)
+        if (levelState != LevelState.GameOver && readyForNextLevel && Input.anyKeyDown)
         {
             SceneManager.LoadScene(nextLevel.name);
         }

@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public float maxFallSpeed = 8f; // Units (pixels) per second
     public float commandRange = 128f;
     public Vector2 speechBubbleOffset = new Vector2(0, 1);
+    public LayerMask hazardLayers;
 
     private Rigidbody2D rb;
     private Collider2D col;
@@ -31,12 +32,15 @@ public class PlayerController : MonoBehaviour
 
     private InputAction moveAction;
     private InputAction jumpAction;
-    private InputAction goAction;
-    private InputAction stopAction;
+    private InputAction commandGoAction;
+    private InputAction commandStopAction;
+    private InputAction commandJumpAction;
 
     private Animator animator;
     private Animator speechBubbleAnimator;
     private bool commandReady = true;
+    private bool isAlive = true;
+    private LevelManager levelManager;
 
     void Start()
     {
@@ -45,11 +49,13 @@ public class PlayerController : MonoBehaviour
         collisionDetector = GetComponent<CollisionDetector2D>();
         animator = GetComponent<Animator>();
         speechBubbleAnimator = transform.Find("Command Bubble").GetComponent<Animator>();
+        levelManager = FindFirstObjectByType<LevelManager>();
 
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
-        goAction = InputSystem.actions.FindAction("Command: Go");
-        stopAction = InputSystem.actions.FindAction("Command: Stop");
+        commandGoAction = InputSystem.actions.FindAction("Command: Go");
+        commandStopAction = InputSystem.actions.FindAction("Command: Stop");
+        commandJumpAction = InputSystem.actions.FindAction("Command: Jump");
     }
 
     void HandleMovement()
@@ -143,7 +149,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        if (goAction.triggered)
+        if (commandGoAction.triggered)
         {
             speechBubbleAnimator.SetTrigger("go");
             foreach (var sheepController in FindSheepInRange())
@@ -152,7 +158,7 @@ public class PlayerController : MonoBehaviour
             }
             commandReady = false;
         }
-        if (stopAction.triggered)
+        else if (commandStopAction.triggered)
         {
             speechBubbleAnimator.SetTrigger("stop");
             foreach (var sheepController in FindSheepInRange())
@@ -161,11 +167,26 @@ public class PlayerController : MonoBehaviour
             }
             commandReady = false;
         }
+        else if (commandJumpAction.triggered)
+        {
+            speechBubbleAnimator.SetTrigger("jump");
+            foreach (var sheepController in FindSheepInRange())
+            {
+                sheepController.ReceiveCommand(SheepCommand.Jump, transform.position);
+            }
+            commandReady = false;
+        }
     }
 
     public void OnCommandAnimationComplete()
     {
         commandReady = true;
+    }
+
+    public void OnDeathAnimationComplete()
+    {
+        gameObject.SetActive(false);
+        levelManager.OnPlayerDeath();
     }
 
     SheepController[] FindSheep()
@@ -192,10 +213,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        HandleMovement();
-        HandleJump();
-        HandleGravity();
-        HandleCommands();
+        if (isAlive)
+        {
+            HandleMovement();
+            HandleJump();
+            HandleGravity();
+            HandleCommands();
+        }
 
         animator.SetFloat("vertical_speed", verticalVelocity);
         animator.SetBool("is_grounded", isGrounded);
@@ -203,13 +227,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("MovingPlatform"))
+        if (hazardLayers == (hazardLayers | (1 << collision.gameObject.layer)))
         {
-            currentPlatform = collision.transform;
-            transform.SetParent(currentPlatform);
+            isAlive = false;
+            animator.SetTrigger("hit");
         }
     }
 
+    /*
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("MovingPlatform"))
@@ -217,4 +242,5 @@ public class PlayerController : MonoBehaviour
             transform.SetParent(null);
         }
     }
+    */
 }

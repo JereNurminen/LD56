@@ -7,14 +7,22 @@ using UnityEngine.XR;
 public enum SheepCommand
 {
     Go,
-    Stop
+    Stop,
+    Jump
+}
+
+enum JumpStrength
+{
+    Short,
+    Long
 }
 
 public class SheepController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float memoryDuration = 5f;
-    public float jumpSpeed = 10f;
+    public float shortJumpSpeed = 10f;
+    public float longJumpSpeed = 32f;
     public float fallAcceleration = 4f;
     public LayerMask obstacleLayers;
     public LayerMask hazardLayers;
@@ -34,8 +42,10 @@ public class SheepController : MonoBehaviour
     private CollisionDetector2D collisionDetector;
     private Collider2D col;
     private SheepCommand? currentCommand = null;
+    private bool isRunning = false;
     private Animator animator;
     private LevelManager levelManager;
+    private BoxCollider2D levelBounds;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -47,6 +57,7 @@ public class SheepController : MonoBehaviour
         collisionDetector = GetComponent<CollisionDetector2D>();
         animator = GetComponent<Animator>();
         levelManager = FindFirstObjectByType<LevelManager>();
+        levelBounds = levelManager.GetComponent<BoxCollider2D>();
     }
 
     private void HandleGravity()
@@ -86,7 +97,6 @@ public class SheepController : MonoBehaviour
 
     public void ReceiveCommand(SheepCommand command, Vector2 commandPos)
     {
-        currentCommand = command;
         timeSinceCommand = 0;
         switch (command)
         {
@@ -96,15 +106,32 @@ public class SheepController : MonoBehaviour
             case SheepCommand.Stop:
                 Stop();
                 break;
+            case SheepCommand.Jump:
+                Jump(JumpStrength.Long);
+                break;
         }
     }
 
     void Go(Vector2 moveAwayFrom)
     {
+        isRunning = true;
         direction = transform.position.x > moveAwayFrom.x ? 1 : -1;
     }
 
-    void Stop() { }
+    void Stop()
+    {
+        isRunning = false;
+    }
+
+    void Jump(JumpStrength strength)
+    {
+        if (isGrounded)
+        {
+            verticalVelocity = strength == JumpStrength.Long ? longJumpSpeed : shortJumpSpeed;
+            isJumping = true;
+            animator.SetTrigger("jump");
+        }
+    }
 
     void DetectLedge()
     {
@@ -126,9 +153,7 @@ public class SheepController : MonoBehaviour
             || (leftGroundHit.collider != null && rightGroundHit.collider == null)
         )
         {
-            verticalVelocity = jumpSpeed;
-            isJumping = true;
-            animator.SetTrigger("jump");
+            Jump(JumpStrength.Short);
         }
     }
 
@@ -213,7 +238,7 @@ public class SheepController : MonoBehaviour
             currentCommand = null;
         }
 
-        if (currentCommand == SheepCommand.Go || isJumping)
+        if (isRunning || isJumping)
         {
             Move();
             animator.SetBool("is_running", true);
@@ -224,5 +249,15 @@ public class SheepController : MonoBehaviour
         }
 
         animator.SetBool("is_grounded", isGrounded);
+
+        if (
+            !isSuccess && transform.position.y > levelBounds.bounds.max.y
+            || transform.position.y < levelBounds.bounds.min.y
+            || transform.position.x > levelBounds.bounds.max.x
+            || transform.position.x < levelBounds.bounds.min.x
+        )
+        {
+            Kill();
+        }
     }
 }
