@@ -27,7 +27,8 @@ public class SheepController : MonoBehaviour
     private float timeSinceCommand = 0;
     private bool isGrounded = true;
     private bool isJumping = false;
-    private bool isAlive = true;
+    public bool isAlive = true;
+    public bool isSuccess = false;
 
     private CollisionDetector2D collisionDetector;
     private Collider2D col;
@@ -184,7 +185,8 @@ public class SheepController : MonoBehaviour
 
     public void Kill()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     // Update is called once per frame

@@ -10,9 +10,11 @@ public enum SheepIconState
 
 public class SheepIcon : MonoBehaviour
 {
-    public Image defaultSheepIcon;
-    public Image deadSheepIcon;
-    public Image successSheepIcon;
+    public Sprite defaultSheepIcon;
+    public Sprite deadSheepIcon;
+    public Sprite successSheepIcon;
+
+    private Image UiImage;
     public int id = 0;
 
     private SpriteRenderer spriteRenderer;
@@ -21,21 +23,24 @@ public class SheepIcon : MonoBehaviour
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = defaultSheepIcon.sprite;
+        UiImage = GetComponent<Image>();
+
+        SetState(SheepIconState.Default);
     }
 
     public void SetState(SheepIconState state)
     {
+        Debug.Log("Setting state to " + state);
         switch (state)
         {
             case SheepIconState.Default:
-                spriteRenderer.sprite = defaultSheepIcon.sprite;
+                UiImage.sprite = defaultSheepIcon;
                 break;
             case SheepIconState.Dead:
-                spriteRenderer.sprite = deadSheepIcon.sprite;
+                UiImage.sprite = deadSheepIcon;
                 break;
             case SheepIconState.Success:
-                spriteRenderer.sprite = successSheepIcon.sprite;
+                UiImage.sprite = successSheepIcon;
                 break;
         }
     }
