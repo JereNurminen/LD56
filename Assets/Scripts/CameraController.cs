@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public bool isEnabled = true;
     public Vector2 offset;
     public float followSpeed = 5f;
     private PlayerController playerController;
@@ -18,6 +19,10 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isEnabled)
+        {
+            return;
+        }
         Vector3 targetPosition =
             playerController.transform.position + new Vector3(offset.x, offset.y, -10);
         Vector3 newPosition = Vector3.Lerp(

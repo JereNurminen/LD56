@@ -1,4 +1,5 @@
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -21,7 +22,7 @@ public enum LevelState
 public class LevelManager : MonoBehaviour
 {
     public SheepStatus[] sheepStatuses;
-    public Scene nextLevel;
+    public SceneAsset nextLevel;
     public GameObject levelDonePanel;
     public GameObject gameDonePanel;
     public GameObject gameOverPanel;
@@ -35,15 +36,18 @@ public class LevelManager : MonoBehaviour
     private int successSheepCount = 0;
     private bool readyForNextLevel = false;
     private LevelState levelState = LevelState.Playing;
+    private CameraController cameraController;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         endZone = GameObject.Find("End Zone").GetComponent<BoxCollider2D>();
+        cameraController = FindFirstObjectByType<CameraController>();
         sheepControllers = FindObjectsByType<SheepController>(FindObjectsSortMode.None);
         initialSheepCount = sheepControllers.Length;
 
         levelDoneScreen = levelDonePanel.GetComponent<SlideInController>();
+        gameDoneScreen = gameDonePanel.GetComponent<SlideInController>();
         failScreen = gameOverPanel.GetComponent<SlideInController>();
     }
 
@@ -77,6 +81,7 @@ public class LevelManager : MonoBehaviour
             && sheepStatuses.Any(sheepStatus => sheepStatus == SheepStatus.Success)
         )
         {
+            cameraController.isEnabled = false;
             if (nextLevel != null)
             {
                 Debug.Log("Level complete!");
@@ -92,6 +97,7 @@ public class LevelManager : MonoBehaviour
         }
         else if (sheepStatuses.All(sheepStatus => sheepStatus != SheepStatus.Alive))
         {
+            cameraController.isEnabled = false;
             Debug.Log("Level failed!");
             failScreen.SlideIn(() => readyForNextLevel = true);
             levelState = LevelState.GameOver;
@@ -104,9 +110,11 @@ public class LevelManager : MonoBehaviour
         // restart level if any key is pressed once ready for next level
         if (readyForNextLevel && Input.anyKeyDown)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(
-                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
-            );
+            SceneManager.LoadScene(nextLevel.name);
+        }
+        else if (levelState == LevelState.GameOver && Input.anyKeyDown)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }
