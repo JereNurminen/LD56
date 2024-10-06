@@ -18,6 +18,7 @@ public class SheepController : MonoBehaviour
     public float fallAcceleration = 4f;
     public LayerMask obstacleLayers;
     public LayerMask hazardLayers;
+    public LayerMask goalLayers;
 
     private float horizontalVelocity = 0;
     private float verticalVelocity = 0;
@@ -34,6 +35,7 @@ public class SheepController : MonoBehaviour
     private Collider2D col;
     private SheepCommand? currentCommand = null;
     private Animator animator;
+    private LevelManager levelManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,6 +46,7 @@ public class SheepController : MonoBehaviour
         col = GetComponent<Collider2D>();
         collisionDetector = GetComponent<CollisionDetector2D>();
         animator = GetComponent<Animator>();
+        levelManager = FindFirstObjectByType<LevelManager>();
     }
 
     private void HandleGravity()
@@ -170,10 +173,14 @@ public class SheepController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.gameObject.name);
         if (hazardLayers == (hazardLayers | (1 << collision.gameObject.layer)))
         {
             OnHazardHit();
+        }
+        else if (goalLayers == (goalLayers | (1 << collision.gameObject.layer)))
+        {
+            isSuccess = true;
+            levelManager.UpdateSheepStatuses();
         }
     }
 
@@ -187,6 +194,7 @@ public class SheepController : MonoBehaviour
     {
         //Destroy(gameObject);
         gameObject.SetActive(false);
+        levelManager.UpdateSheepStatuses();
     }
 
     // Update is called once per frame

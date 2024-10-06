@@ -114,6 +114,11 @@ MonoBehaviour:
   hazardLayers:
     serializedVersion: 2
     m_Bits: 512
+  goalLayers:
+    serializedVersion: 2
+    m_Bits: 1024
+  isAlive: 1
+  isSuccess: 0
 --- !u!114 &3946243512604638360
 MonoBehaviour:
   m_ObjectHideFlags: 0
