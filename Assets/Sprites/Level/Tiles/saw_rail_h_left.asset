@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: saw_rail_top
+  m_Name: saw_rail_h_left
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -1339618809422754914, guid: 8feef095a16e140c4aaec32222a53727, type: 3}
+  m_Sprite: {fileID: -1441770932, guid: 8feef095a16e140c4aaec32222a53727, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
