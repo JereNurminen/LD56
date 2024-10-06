@@ -94,7 +94,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -108,7 +108,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 1
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -132,7 +132,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -173,10 +173,10 @@ TextureImporter:
       name: lever_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 191
-        width: 40
-        height: 22
+        x: 0
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,10 +195,10 @@ TextureImporter:
       name: lever_1
       rect:
         serializedVersion: 2
-        x: 21
-        y: 154
-        width: 22
-        height: 23
+        x: 0
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -217,10 +217,10 @@ TextureImporter:
       name: lever_2
       rect:
         serializedVersion: 2
-        x: 85
-        y: 155
-        width: 22
-        height: 23
+        x: 64
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -239,10 +239,10 @@ TextureImporter:
       name: lever_3
       rect:
         serializedVersion: 2
-        x: 149
-        y: 156
-        width: 22
-        height: 23
+        x: 128
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -261,10 +261,10 @@ TextureImporter:
       name: lever_4
       rect:
         serializedVersion: 2
-        x: 213
-        y: 156
-        width: 22
-        height: 23
+        x: 192
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -283,10 +283,10 @@ TextureImporter:
       name: lever_5
       rect:
         serializedVersion: 2
-        x: 277
-        y: 155
-        width: 22
-        height: 23
+        x: 256
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -305,10 +305,10 @@ TextureImporter:
       name: lever_6
       rect:
         serializedVersion: 2
-        x: 341
-        y: 154
-        width: 22
-        height: 23
+        x: 320
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -327,10 +327,10 @@ TextureImporter:
       name: lever_7
       rect:
         serializedVersion: 2
-        x: 2
-        y: 127
-        width: 40
-        height: 22
+        x: 0
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -349,10 +349,10 @@ TextureImporter:
       name: lever_8
       rect:
         serializedVersion: 2
-        x: 66
-        y: 127
-        width: 40
-        height: 22
+        x: 64
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -371,10 +371,10 @@ TextureImporter:
       name: lever_9
       rect:
         serializedVersion: 2
-        x: 130
-        y: 127
-        width: 40
-        height: 22
+        x: 128
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -393,10 +393,10 @@ TextureImporter:
       name: lever_10
       rect:
         serializedVersion: 2
-        x: 194
-        y: 127
-        width: 40
-        height: 22
+        x: 192
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -415,10 +415,10 @@ TextureImporter:
       name: lever_11
       rect:
         serializedVersion: 2
-        x: 258
-        y: 127
-        width: 40
-        height: 22
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -437,10 +437,10 @@ TextureImporter:
       name: lever_12
       rect:
         serializedVersion: 2
-        x: 322
-        y: 127
-        width: 40
-        height: 22
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -459,10 +459,10 @@ TextureImporter:
       name: lever_13
       rect:
         serializedVersion: 2
-        x: 11
-        y: 63
-        width: 31
-        height: 29
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -477,143 +477,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: lever_14
-      rect:
-        serializedVersion: 2
-        x: 86
-        y: 63
-        width: 20
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9bb47e9524be36c30800000000000000
-      internalID: 4351580335178730425
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: lever_15
-      rect:
-        serializedVersion: 2
-        x: 150
-        y: 63
-        width: 31
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f258b4e0c985e6900800000000000000
-      internalID: 679578021057496367
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: lever_16
-      rect:
-        serializedVersion: 2
-        x: 214
-        y: 63
-        width: 40
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0cacc0eeb990ac280800000000000000
-      internalID: -9022388338164970816
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: lever_17
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 0
-        width: 31
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4d5840bfe73561940800000000000000
-      internalID: 5266488619098736084
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: lever_18
-      rect:
-        serializedVersion: 2
-        x: 86
-        y: 0
-        width: 20
-        height: 31
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9866329d9390e4f80800000000000000
-      internalID: -8120542934041663863
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: lever_19
-      rect:
-        serializedVersion: 2
-        x: 139
-        y: 0
-        width: 31
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 451113bc1364149a0800000000000000
-      internalID: -6250637628137205420
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 4c42323e0da1e4082bd61a5aca6f164d
     internalID: 0
     vertices: []
     indices: 
@@ -622,7 +490,21 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      lever_0: -3975624549204834352
+      lever_1: -258920163012198913
+      lever_10: 7376021646774252837
+      lever_11: 2553006389622633363
+      lever_12: 2207958156295916758
+      lever_13: -6755463729892360690
+      lever_2: -2372938531549053325
+      lever_3: -1089659241226972634
+      lever_4: 5259896095111878365
+      lever_5: 9207632205287217000
+      lever_6: -1926287129948874595
+      lever_7: -4372726363920107632
+      lever_8: 2850233222694163402
+      lever_9: 4709956123944259734
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

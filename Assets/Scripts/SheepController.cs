@@ -213,6 +213,8 @@ public class SheepController : MonoBehaviour
     {
         animator.SetTrigger("die");
         isAlive = false;
+        collisionDetector.enabled = false;
+        gameObject.layer = LayerMask.NameToLayer("Dead Sheep");
     }
 
     public void Kill()
