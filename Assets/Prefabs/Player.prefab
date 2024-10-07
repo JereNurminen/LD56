@@ -80,7 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1166480759
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -284627385986098231, guid: 4ab837a79b6d4469a9b88417e2f29336, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -179,10 +179,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 64
-  jumpSpeed: 64
+  jumpSpeed: 100
   coyoteTime: 0.5
-  fallAcceleration: 48
-  maxFallSpeed: 16
+  fallAcceleration: 150
+  maxFallSpeed: 64
+  gravityImmunityDuration: 0.2
   commandRange: 128
   speechBubbleOffset: {x: 0, y: 1}
   hazardLayers:

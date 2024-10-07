@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public float coyoteTime = 0.2f; // Coyote time duration
     public float fallAcceleration = 4f; // Units (pixels) per second
     public float maxFallSpeed = 8f; // Units (pixels) per second
+    public float gravityImmunityDuration = 0.5f;
     public float commandRange = 128f;
     public Vector2 speechBubbleOffset = new Vector2(0, 1);
     public LayerMask hazardLayers;
@@ -24,11 +25,10 @@ public class PlayerController : MonoBehaviour
     private Collider2D col;
     private CollisionDetector2D collisionDetector;
     private float coyoteTimeCounter;
-    private Transform currentPlatform;
     private float verticalVelocity;
     private float horizontalVelocity;
     private bool isGrounded;
-    private bool jumpThisFrame;
+    private float timeSinceJump = 0;
 
     private InputAction moveAction;
     private InputAction jumpAction;
@@ -97,15 +97,11 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded && jumpAction.triggered && coyoteTimeCounter > 0f)
         {
-            jumpThisFrame = true;
             verticalVelocity = jumpSpeed;
+            timeSinceJump = 0;
             coyoteTimeCounter = 0f;
 
             animator.SetTrigger("jump");
-        }
-        else
-        {
-            jumpThisFrame = false;
         }
     }
 
@@ -120,8 +116,11 @@ public class PlayerController : MonoBehaviour
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
-            verticalVelocity -= fallAcceleration * Time.deltaTime;
             isGrounded = false;
+            if (timeSinceJump > gravityImmunityDuration)
+            {
+                verticalVelocity -= fallAcceleration * Time.deltaTime;
+            }
         }
 
         Vector2 predictedPosition =
@@ -223,6 +222,8 @@ public class PlayerController : MonoBehaviour
 
         animator.SetFloat("vertical_speed", verticalVelocity);
         animator.SetBool("is_grounded", isGrounded);
+
+        timeSinceJump += Time.deltaTime;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
