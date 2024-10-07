@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private bool commandReady = true;
     private bool isAlive = true;
     private LevelManager levelManager;
+    private SheepController[] sheepControllers;
 
     void Start()
     {
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         speechBubbleAnimator = transform.Find("Command Bubble").GetComponent<Animator>();
         levelManager = FindFirstObjectByType<LevelManager>();
+        sheepControllers = FindObjectsByType<SheepController>(FindObjectsSortMode.None);
 
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
@@ -156,7 +158,7 @@ public class PlayerController : MonoBehaviour
         if (commandGoAction.triggered)
         {
             speechBubbleAnimator.SetTrigger("go");
-            foreach (var sheepController in FindSheepInRange())
+            foreach (var sheepController in sheepControllers)
             {
                 sheepController.ReceiveCommand(SheepCommand.Go, transform.position);
             }
@@ -165,7 +167,7 @@ public class PlayerController : MonoBehaviour
         else if (commandStopAction.triggered)
         {
             speechBubbleAnimator.SetTrigger("stop");
-            foreach (var sheepController in FindSheepInRange())
+            foreach (var sheepController in sheepControllers)
             {
                 sheepController.ReceiveCommand(SheepCommand.Stop, transform.position);
             }
@@ -174,7 +176,7 @@ public class PlayerController : MonoBehaviour
         else if (commandJumpAction.triggered)
         {
             speechBubbleAnimator.SetTrigger("jump");
-            foreach (var sheepController in FindSheepInRange())
+            foreach (var sheepController in sheepControllers)
             {
                 sheepController.ReceiveCommand(SheepCommand.Jump, transform.position);
             }
@@ -191,28 +193,6 @@ public class PlayerController : MonoBehaviour
     {
         gameObject.SetActive(false);
         levelManager.OnPlayerDeath();
-    }
-
-    SheepController[] FindSheep()
-    {
-        var sheepControllers = FindObjectsOfType<SheepController>();
-        return sheepControllers;
-    }
-
-    SheepController[] FindSheepInRange()
-    {
-        var sheepInRange = new List<SheepController>();
-        foreach (var sheepController in FindSheep())
-        {
-            if (
-                Vector2.Distance(sheepController.transform.position, transform.position)
-                < commandRange
-            )
-            {
-                sheepInRange.Add(sheepController);
-            }
-        }
-        return sheepInRange.ToArray();
     }
 
     void Update()

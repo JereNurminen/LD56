@@ -51,6 +51,8 @@ public class SheepController : MonoBehaviour
     private Animator animator;
     private LevelManager levelManager;
     private BoxCollider2D levelBounds;
+    public bool isInRange;
+    private PlayerController playerController;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +65,7 @@ public class SheepController : MonoBehaviour
         animator = GetComponent<Animator>();
         levelManager = FindFirstObjectByType<LevelManager>();
         levelBounds = levelManager.GetComponent<BoxCollider2D>();
+        playerController = FindFirstObjectByType<PlayerController>();
     }
 
     private void HandleGravity()
@@ -102,6 +105,10 @@ public class SheepController : MonoBehaviour
 
     public void ReceiveCommand(SheepCommand command, Vector2 commandPos)
     {
+        if (!isAlive || !isInRange)
+        {
+            return;
+        }
         timeSinceCommand = 0;
         switch (command)
         {
@@ -250,6 +257,19 @@ public class SheepController : MonoBehaviour
     void Update()
     {
         timeSinceEdgeDetected += Time.deltaTime;
+
+        var isInPlayersFacingDirection =
+            playerController.transform.localScale.x.CompareTo(0) >= 0
+                && transform.position.x > playerController.transform.position.x
+            || playerController.transform.localScale.x.CompareTo(0) < 0
+                && transform.position.x < playerController.transform.position.x;
+
+        isInRange =
+            isInPlayersFacingDirection
+            && (
+                Vector2.Distance(playerController.transform.position, transform.position)
+                < playerController.commandRange
+            );
 
         if (!isAlive)
         {
