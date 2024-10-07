@@ -11,6 +11,8 @@ public class SawController : MonoBehaviour
     public Vector2 startPosition;
     public Vector2 endPosition;
     public float speed = 1f;
+    public bool isMoving = true;
+    public bool isSingleUse = false;
 
     private MovingTowards movingTowards = MovingTowards.End;
 
@@ -27,9 +29,19 @@ public class SawController : MonoBehaviour
         transform.position = startPosition;
     }
 
+    public void Activate()
+    {
+        isMoving = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (!isMoving)
+        {
+            return;
+        }
+
         switch (movingTowards)
         {
             case MovingTowards.Start:
@@ -51,7 +63,14 @@ public class SawController : MonoBehaviour
                 );
                 if ((Vector2)transform.position == endPosition)
                 {
-                    movingTowards = MovingTowards.Start;
+                    if (isSingleUse)
+                    {
+                        isMoving = false;
+                    }
+                    else
+                    {
+                        movingTowards = MovingTowards.Start;
+                    }
                 }
                 break;
         }
