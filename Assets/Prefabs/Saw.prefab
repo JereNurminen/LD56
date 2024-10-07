@@ -105,7 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPosition: {x: -24, y: -61.3}
   endPosition: {x: -24, y: 28}
-  speed: 24
+  speed: 48
 --- !u!95 &5442211509938813496
 Animator:
   serializedVersion: 7

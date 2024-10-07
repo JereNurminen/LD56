@@ -17,18 +17,18 @@ public class PlatformController : MonoBehaviour
 
     public void Open()
     {
-        animator.SetBool("is_open", true);
-        col.enabled = false;
+        animator.SetBool("is_open", startOpen ? false : true);
+        col.enabled = startOpen ? true : false;
     }
 
     public void Close()
     {
-        animator.SetBool("is_open", false);
+        animator.SetBool("is_open", startOpen ? true : false);
     }
 
     public void OnCloseAnimationComplete()
     {
-        col.enabled = true;
+        col.enabled = startOpen ? false : true;
     }
 
     // Update is called once per frame
