@@ -104,6 +104,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startOpen: 0
+  launchLayers:
+    serializedVersion: 2
+    m_Bits: 192
+  launchBoxOffset: {x: 0, y: -12}
+  launchBoxSize: {x: 16, y: 16}
 --- !u!61 &5232002556480717358
 BoxCollider2D:
   m_ObjectHideFlags: 0

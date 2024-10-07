@@ -93,15 +93,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Jump()
+    {
+        verticalVelocity = jumpSpeed;
+        timeSinceJump = 0;
+        coyoteTimeCounter = 0f;
+
+        animator.SetTrigger("jump");
+    }
+
     private void HandleJump()
     {
         if (isGrounded && jumpAction.triggered && coyoteTimeCounter > 0f)
         {
-            verticalVelocity = jumpSpeed;
-            timeSinceJump = 0;
-            coyoteTimeCounter = 0f;
-
-            animator.SetTrigger("jump");
+            Jump();
         }
     }
 

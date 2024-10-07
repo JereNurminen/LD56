@@ -24,7 +24,6 @@ public class LeverController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        Debug.Log(other.gameObject.name);
         if (playerLayer == (playerLayer | (1 << other.gameObject.layer)))
         {
             playerIsInRange = true;
@@ -33,7 +32,6 @@ public class LeverController : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D other)
     {
-        Debug.Log(other.gameObject.name);
         if (playerLayer == (playerLayer | (1 << other.gameObject.layer)))
         {
             playerIsInRange = false;

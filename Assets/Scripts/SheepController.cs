@@ -11,10 +11,11 @@ public enum SheepCommand
     Jump
 }
 
-enum JumpStrength
+public enum SheepJumpStrength
 {
     Short,
-    Long
+    Long,
+    ExtraLong
 }
 
 public class SheepController : MonoBehaviour
@@ -107,7 +108,7 @@ public class SheepController : MonoBehaviour
                 Stop();
                 break;
             case SheepCommand.Jump:
-                Jump(JumpStrength.Long);
+                Jump(SheepJumpStrength.Long);
                 break;
         }
     }
@@ -123,11 +124,17 @@ public class SheepController : MonoBehaviour
         isRunning = false;
     }
 
-    void Jump(JumpStrength strength)
+    public void Jump(SheepJumpStrength strength)
     {
         if (isGrounded)
         {
-            verticalVelocity = strength == JumpStrength.Long ? longJumpSpeed : shortJumpSpeed;
+            verticalVelocity = strength switch
+            {
+                SheepJumpStrength.Short => shortJumpSpeed,
+                SheepJumpStrength.Long => longJumpSpeed,
+                SheepJumpStrength.ExtraLong => longJumpSpeed * 2f,
+                _ => verticalVelocity
+            };
             isJumping = true;
             animator.SetTrigger("jump");
         }
@@ -153,7 +160,7 @@ public class SheepController : MonoBehaviour
             || (leftGroundHit.collider != null && rightGroundHit.collider == null)
         )
         {
-            Jump(JumpStrength.Short);
+            Jump(SheepJumpStrength.Short);
         }
     }
 
