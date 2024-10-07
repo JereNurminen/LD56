@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -28,6 +29,9 @@ public class SheepController : MonoBehaviour
     public LayerMask obstacleLayers;
     public LayerMask hazardLayers;
     public LayerMask goalLayers;
+    public float autoJumpDelay = 1f;
+    private float timeSinceEdgeDetected = 0f;
+    private bool isOverEdge = false;
 
     private float horizontalVelocity = 0;
     private float verticalVelocity = 0;
@@ -142,25 +146,36 @@ public class SheepController : MonoBehaviour
 
     void DetectLedge()
     {
-        var leftGroundHit = Physics2D.Raycast(
-            new Vector2(col.bounds.min.x, col.bounds.min.y),
+        var frontX = direction == 1 ? col.bounds.max.x : col.bounds.min.x;
+        var backX = direction == 1 ? col.bounds.min.x : col.bounds.max.x;
+
+        var backGroundHit = Physics2D.Raycast(
+            new Vector2(backX, col.bounds.min.y),
             Vector2.down,
             2f,
             collisionDetector.groundLayer
         );
-        var rightGroundHit = Physics2D.Raycast(
-            new Vector2(col.bounds.max.x, col.bounds.min.y),
+        var frontGroundHit = Physics2D.Raycast(
+            new Vector2(frontX, col.bounds.min.y),
             Vector2.down,
             2f,
             collisionDetector.groundLayer
         );
 
-        if (
-            (leftGroundHit.collider == null && rightGroundHit.collider != null)
-            || (leftGroundHit.collider != null && rightGroundHit.collider == null)
-        )
+        if (backGroundHit.collider != null && frontGroundHit.collider == null)
         {
-            Jump(SheepJumpStrength.Short);
+            if (!isOverEdge)
+            {
+                timeSinceEdgeDetected = 0;
+            }
+            isOverEdge = true;
+
+            if (timeSinceEdgeDetected > autoJumpDelay)
+            {
+                Jump(SheepJumpStrength.Short);
+                timeSinceEdgeDetected = 0;
+                isOverEdge = false;
+            }
         }
     }
 
@@ -234,6 +249,8 @@ public class SheepController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timeSinceEdgeDetected += Time.deltaTime;
+
         if (!isAlive)
         {
             return;
