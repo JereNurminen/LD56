@@ -12,6 +12,12 @@ public enum SheepCommand
     Jump
 }
 
+public enum CommandFrom
+{
+    Player,
+    Sheep
+}
+
 public enum SheepJumpStrength
 {
     Short,
@@ -46,7 +52,7 @@ public class SheepController : MonoBehaviour
 
     private CollisionDetector2D collisionDetector;
     private Collider2D col;
-    private SheepCommand? currentCommand = null;
+    public SheepCommand? currentCommand = null;
     private bool isRunning = false;
     private Animator animator;
     private LevelManager levelManager;
@@ -103,9 +109,13 @@ public class SheepController : MonoBehaviour
         animator.SetFloat("vertical_speed", verticalVelocity);
     }
 
-    public void ReceiveCommand(SheepCommand command, Vector2 commandPos)
+    public void ReceiveCommand(
+        SheepCommand? command,
+        Vector2 commandPos,
+        CommandFrom from = CommandFrom.Player
+    )
     {
-        if (!isAlive || !isInRange)
+        if ((from == CommandFrom.Player && !isInRange) || !isAlive || command == null)
         {
             return;
         }
@@ -113,9 +123,11 @@ public class SheepController : MonoBehaviour
         switch (command)
         {
             case SheepCommand.Go:
+                currentCommand = command;
                 Go(commandPos);
                 break;
             case SheepCommand.Stop:
+                currentCommand = null;
                 Stop();
                 break;
             case SheepCommand.Jump:
@@ -206,6 +218,21 @@ public class SheepController : MonoBehaviour
         );
 
         var wouldHit = bottomHit.collider != null || topHit.collider != null;
+        var other =
+            bottomHit.collider != null
+                ? bottomHit.collider
+                : topHit.collider != null
+                    ? topHit.collider
+                    : null;
+
+        if (other != null && other.GetComponent<SheepController>() != null)
+        {
+            var otherSheep = other.GetComponent<SheepController>();
+            if (currentCommand != null && otherSheep.currentCommand == null)
+            {
+                otherSheep.ReceiveCommand(currentCommand, transform.position, CommandFrom.Sheep);
+            }
+        }
 
         return wouldHit;
     }

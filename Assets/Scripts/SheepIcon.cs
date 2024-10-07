@@ -30,7 +30,6 @@ public class SheepIcon : MonoBehaviour
 
     public void SetState(SheepIconState state)
     {
-        Debug.Log("Setting state to " + state);
         switch (state)
         {
             case SheepIconState.Default:
