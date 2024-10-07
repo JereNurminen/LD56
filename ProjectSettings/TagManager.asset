@@ -56,8 +56,11 @@ TagManager:
   - name: Sheep
     uniqueID: 3056450775
     locked: 0
-  - name: Effects
+  - name: Foreground
     uniqueID: 1999896031
+    locked: 0
+  - name: Most Definitely In Front
+    uniqueID: 609783853
     locked: 0
   m_RenderingLayers:
   - Default

@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Linq;
 using UnityEngine;
 
 public class PlatformController : MonoBehaviour
@@ -8,6 +9,7 @@ public class PlatformController : MonoBehaviour
     public Vector2 launchBoxOffset;
     public Vector2 launchBoxSize;
     private Animator animator;
+    private Animator stemAnimator;
     private Rigidbody2D rb;
     private Collider2D col;
 
@@ -20,20 +22,27 @@ public class PlatformController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        animator = GetComponent<Animator>();
-        animator.SetBool("is_open", startOpen);
         col = GetComponent<Collider2D>();
+        animator = GetComponent<Animator>();
+        stemAnimator = GetComponentsInChildren<Animator>()
+            .Where(animator => animator.gameObject != gameObject)
+            .First();
+
+        animator.SetBool("is_open", startOpen);
+        stemAnimator.SetBool("is_active", false);
     }
 
     public void Open()
     {
-        animator.SetBool("is_open", startOpen ? false : true);
-        col.enabled = startOpen ? true : false;
+        animator.SetBool("is_open", true);
+        stemAnimator.SetBool("is_active", !startOpen);
+        col.enabled = false;
     }
 
     public void Close()
     {
-        animator.SetBool("is_open", startOpen ? true : false);
+        animator.SetBool("is_open", false);
+        stemAnimator.SetBool("is_active", startOpen);
 
         var hits = Physics2D.OverlapBoxAll(
             (Vector2)transform.position + launchBoxOffset,
@@ -58,7 +67,7 @@ public class PlatformController : MonoBehaviour
 
     public void OnCloseAnimationComplete()
     {
-        col.enabled = startOpen ? false : true;
+        col.enabled = true;
     }
 
     // Update is called once per frame
