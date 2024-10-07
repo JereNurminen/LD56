@@ -4,6 +4,7 @@ using UnityEngine;
 public class CollisionDetector2D : MonoBehaviour
 {
     public LayerMask groundLayer;
+    public LayerMask ceilingLayers;
     public float groundCheckDistance = 0.1f;
     public float wallCheckDistance = 0.1f;
 
@@ -43,11 +44,9 @@ public class CollisionDetector2D : MonoBehaviour
 
     public bool IsTouchingCeiling()
     {
-        Vector2 boxCenter = new Vector2(
-            col.bounds.center.x,
-            col.bounds.max.y + groundCheckDistance / 2
-        );
-        Vector2 boxSize = new Vector2(col.bounds.size.x, groundCheckDistance);
-        return Physics2D.OverlapBox(boxCenter, boxSize, 0, groundLayer) != null;
+        Vector2 boxCenter = new(col.bounds.center.x, col.bounds.max.y + groundCheckDistance / 2);
+        Vector2 boxSize = new(col.bounds.size.x, groundCheckDistance * 4);
+        Debug.DrawLine(boxCenter + boxSize / 2, boxCenter - boxSize / 2, Color.red);
+        return Physics2D.OverlapBox(boxCenter, boxSize, 0, ceilingLayers) != null;
     }
 }

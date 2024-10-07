@@ -75,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 609783853
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8becea9ce9c874903b3454805f24de34, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -182,7 +182,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1238516521
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: -8636221404721523813, guid: 951ceb3e328994ac4b0e0c0bb05271f1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -214,7 +214,7 @@ MonoBehaviour:
   fallAcceleration: 42
   obstacleLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 8576
   hazardLayers:
     serializedVersion: 2
     m_Bits: 512
@@ -239,9 +239,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
+    m_Bits: 8448
+  ceilingLayers:
+    serializedVersion: 2
     m_Bits: 256
-  groundCheckDistance: 1
-  wallCheckDistance: 1
+  groundCheckDistance: 2
+  wallCheckDistance: 4
 --- !u!61 &2672684162189285562
 BoxCollider2D:
   m_ObjectHideFlags: 0

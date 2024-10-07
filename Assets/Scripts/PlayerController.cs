@@ -1,13 +1,6 @@
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using Mono.Cecil;
-using NUnit.Framework.Constraints;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.VFX;
-using UnityEngine.XR;
 
 public class PlayerController : MonoBehaviour
 {
@@ -60,7 +53,7 @@ public class PlayerController : MonoBehaviour
         commandJumpAction = InputSystem.actions.FindAction("Command: Jump");
     }
 
-    void HandleMovement()
+    void HandleMovementInputs()
     {
         var moveValue = moveAction.ReadValue<Vector2>().x;
         if (moveValue.CompareTo(0) != 0)
@@ -76,21 +69,13 @@ public class PlayerController : MonoBehaviour
                 transform.localScale = new Vector2(-1, 1);
             }
 
-            horizontalVelocity = movement.x * moveSpeed * Time.deltaTime;
-
-            if (collisionDetector.IsTouchingWall(movement.x))
-            {
-                horizontalVelocity = 0;
-            }
-            else
-            {
-                transform.Translate(horizontalVelocity, 0, 0);
-            }
+            horizontalVelocity = movement.x * moveSpeed;
 
             animator.SetBool("is_running", true);
         }
         else
         {
+            horizontalVelocity = 0;
             animator.SetBool("is_running", false);
         }
     }
@@ -129,24 +114,6 @@ public class PlayerController : MonoBehaviour
                 verticalVelocity -= fallAcceleration * Time.deltaTime;
             }
         }
-
-        Vector2 predictedPosition =
-            transform.position + new Vector3(0, verticalVelocity * Time.deltaTime);
-
-        Vector2 castOrig = new(col.bounds.center.x, col.bounds.min.y);
-        Vector2 castTarget =
-            new(predictedPosition.x, predictedPosition.y - col.bounds.size.y / 2 - 1);
-        var hit = Physics2D.Linecast(castOrig, castTarget, collisionDetector.groundLayer);
-
-        if (hit.collider != null && verticalVelocity < 0)
-        {
-            // Snap character to the ground if a collision is detected
-            predictedPosition.y = hit.point.y + (col.bounds.size.y / 2) - col.offset.y;
-            verticalVelocity = 0f;
-        }
-
-        // Move the character on the y-axis
-        transform.position = new Vector2(transform.position.x, predictedPosition.y);
     }
 
     void HandleCommands()
@@ -195,14 +162,82 @@ public class PlayerController : MonoBehaviour
         levelManager.OnPlayerDeath();
     }
 
+    void FixedUpdate()
+    {
+        if (isAlive)
+        {
+            HandleGravity();
+
+            if (collisionDetector.IsTouchingWall(transform.localScale.x))
+            {
+                horizontalVelocity = 0;
+            }
+            else
+            {
+                //transform.Translate(horizontalVelocity * Time.deltaTime, 0, 0);
+                Vector2 horizontalPredictedPosition =
+                    (Vector2)transform.position
+                    + new Vector2(horizontalVelocity * Time.deltaTime, 0);
+                var horizontalCastOrig = new Vector2(col.bounds.center.x, col.bounds.center.y);
+                var horizontalCastTarget = new Vector2(
+                    horizontalPredictedPosition.x,
+                    horizontalPredictedPosition.y
+                );
+                Debug.DrawLine(horizontalCastOrig, horizontalCastTarget, Color.red);
+                var horizontalHit = Physics2D.Linecast(
+                    horizontalCastOrig,
+                    horizontalCastTarget,
+                    collisionDetector.groundLayer
+                );
+
+                if (horizontalHit.collider == null)
+                {
+                    transform.position = horizontalPredictedPosition;
+                }
+                else
+                {
+                    transform.position = new Vector2(
+                        horizontalHit.point.x + col.bounds.size.x / 2,
+                        transform.position.y
+                    );
+                }
+            }
+
+            if (verticalVelocity > 0 && collisionDetector.IsTouchingCeiling())
+            {
+                Debug.Log("Bonk");
+                verticalVelocity = -fallAcceleration * Time.deltaTime;
+            }
+
+            Vector2 predictedPosition =
+                transform.position + new Vector3(0, verticalVelocity * Time.deltaTime);
+
+            Vector2 castOrig = new(col.bounds.center.x, col.bounds.center.y + 3f);
+            Vector2 castTarget =
+                new(predictedPosition.x, predictedPosition.y - col.bounds.size.y / 2 - 3f);
+            var hit = Physics2D.Linecast(castOrig, castTarget, collisionDetector.groundLayer);
+
+            //Debug.DrawLine(castOrig, castTarget, Color.red);
+
+            if (hit.collider != null && verticalVelocity < 0)
+            {
+                // Snap character to the ground if a collision is detected
+                predictedPosition.y = hit.point.y + (col.bounds.size.y / 2) - col.offset.y;
+                verticalVelocity = 0f;
+            }
+
+            // Move the character on the y-axis
+            transform.position = new Vector2(transform.position.x, predictedPosition.y);
+        }
+    }
+
     void Update()
     {
         if (isAlive)
         {
-            HandleMovement();
             HandleJump();
-            HandleGravity();
             HandleCommands();
+            HandleMovementInputs();
         }
 
         animator.SetFloat("vertical_speed", verticalVelocity);

@@ -297,6 +297,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3946243512604638360, guid: ed7055cda0e7e41faaf027519582e169, type: 3}
+      propertyPath: ceilingLayers.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
     - target: {fileID: 4287693782666548645, guid: ed7055cda0e7e41faaf027519582e169, type: 3}
       propertyPath: m_Name
       value: Sheep (1)
@@ -29221,6 +29225,14 @@ PrefabInstance:
     - target: {fileID: 7337467979711161601, guid: be942fa88659a45b19f5a538f9618ebc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494494995748441181, guid: be942fa88659a45b19f5a538f9618ebc, type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 8448
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494494995748441181, guid: be942fa88659a45b19f5a538f9618ebc, type: 3}
+      propertyPath: ceilingLayers.m_Bits
+      value: 8448
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

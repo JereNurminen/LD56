@@ -406,8 +406,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6380867403949369666, guid: 1848b25a5e63d490aaa18870397a7677, type: 3}
       propertyPath: nextLevel
-      value: 
-      objectReference: {fileID: 102900000, guid: 7f6e31d5694bc4208a138e452828bcc0, type: 3}
+      value: Level2
+      objectReference: {fileID: 0}
     - target: {fileID: 6380867403949369666, guid: 1848b25a5e63d490aaa18870397a7677, type: 3}
       propertyPath: gameOverPanel
       value: 

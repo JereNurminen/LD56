@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindFirstObjectByType<PlayerController>();
         // Find the LevelManager
         cameraBounds = GameObject
             .Find("Level Manager")

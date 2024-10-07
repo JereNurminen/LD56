@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public enum SheepStatus
@@ -22,7 +22,7 @@ public enum LevelState
 public class LevelManager : MonoBehaviour
 {
     public SheepStatus[] sheepStatuses;
-    public SceneAsset nextLevel;
+    public string nextLevel;
     public GameObject levelDonePanel;
     public GameObject gameDonePanel;
     public GameObject gameOverPanel;
@@ -38,6 +38,7 @@ public class LevelManager : MonoBehaviour
     private bool readyForNextLevel = false;
     private LevelState levelState = LevelState.Playing;
     private CameraController cameraController;
+    private InputAction restartAction;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,6 +52,8 @@ public class LevelManager : MonoBehaviour
         levelDoneScreen = levelDonePanel.GetComponent<SlideInController>();
         gameDoneScreen = gameDonePanel.GetComponent<SlideInController>();
         failScreen = gameOverPanel.GetComponent<SlideInController>();
+
+        restartAction = InputSystem.actions.FindAction("Restart");
     }
 
     public void UpdateSheepStatuses()
@@ -84,7 +87,7 @@ public class LevelManager : MonoBehaviour
         )
         {
             cameraController.isEnabled = false;
-            if (nextLevel != null)
+            if (nextLevel != null && nextLevel != "")
             {
                 levelDoneScreen.SlideIn(() => readyForNextLevel = true);
                 levelState = LevelState.LevelDone;
@@ -122,11 +125,23 @@ public class LevelManager : MonoBehaviour
         // restart level if any key is pressed once ready for next level
         if (levelState != LevelState.GameOver && readyForNextLevel && Input.anyKeyDown)
         {
-            SceneManager.LoadScene(nextLevel.name);
+            SceneManager.LoadScene(nextLevel);
         }
-        else if (levelState == LevelState.GameOver && Input.anyKeyDown)
+        else if (restartAction.triggered || levelState == LevelState.GameOver && Input.anyKeyDown)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+#if UNITY_STANDALONE && !UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                SceneManager.LoadScene("Level1")
+            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                SceneManager.LoadScene("Level2")
+            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                SceneManager.LoadScene("Level3")
+            } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+                SceneManager.LoadScene("Level4")
+            }
+#endif
     }
 }

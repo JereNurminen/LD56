@@ -1,10 +1,5 @@
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Callbacks;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Scripting.APIUpdating;
-using UnityEngine.XR;
 
 public enum SheepCommand
 {
@@ -85,8 +80,15 @@ public class SheepController : MonoBehaviour
         }
         else
         {
-            verticalVelocity -= fallAcceleration * Time.deltaTime;
-            isGrounded = false;
+            if (!collisionDetector.IsTouchingCeiling())
+            {
+                verticalVelocity -= fallAcceleration * Time.deltaTime;
+                isGrounded = false;
+            }
+            else
+            {
+                verticalVelocity = 0f;
+            }
         }
 
         Vector2 predictedPosition =
@@ -316,13 +318,12 @@ public class SheepController : MonoBehaviour
 
     public void Kill()
     {
-        //Destroy(gameObject);
         gameObject.SetActive(false);
         levelManager.UpdateSheepStatuses();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         timeSinceEdgeDetected += Time.deltaTime;
 
