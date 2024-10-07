@@ -1,3 +1,4 @@
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -140,6 +141,40 @@ public class SheepController : MonoBehaviour
     {
         isRunning = true;
         direction = transform.position.x > moveAwayFrom.x ? 1 : -1;
+
+        // If there are any non-sheep obstacles in the way, turn around
+        var IsBlocked = Physics2D
+            .RaycastAll(
+                new Vector2(col.bounds.center.x, col.bounds.min.y),
+                direction == 1 ? Vector2.right : Vector2.left,
+                col.bounds.size.x / 2 + 5f,
+                obstacleLayers
+            )
+            .Any(
+                hit => hit.collider != null && hit.collider.GetComponent<SheepController>() == null
+            );
+
+        if (IsBlocked)
+        {
+            direction *= -1;
+            var newSheepHits = Physics2D
+                .RaycastAll(
+                    new Vector2(col.bounds.center.x, col.bounds.min.y),
+                    direction == 1 ? Vector2.right : Vector2.left,
+                    col.bounds.size.x / 2 + 5f,
+                    obstacleLayers
+                )
+                .Where(
+                    hit =>
+                        hit.collider != null && hit.collider.GetComponent<SheepController>() != null
+                )
+                .ToArray();
+            foreach (var hit in newSheepHits)
+            {
+                var otherSheep = hit.collider.GetComponent<SheepController>();
+                otherSheep.ReceiveCommand(SheepCommand.Go, transform.position, CommandFrom.Sheep);
+            }
+        }
     }
 
     void Stop()
@@ -149,6 +184,7 @@ public class SheepController : MonoBehaviour
 
     public void Jump(SheepJumpStrength strength)
     {
+        Debug.Log($"Jumping with strength {strength}");
         if (isGrounded)
         {
             verticalVelocity = strength switch
@@ -195,6 +231,11 @@ public class SheepController : MonoBehaviour
                 timeSinceEdgeDetected = 0;
                 isOverEdge = false;
             }
+        }
+        else if (backGroundHit.collider != null && frontGroundHit.collider != null)
+        {
+            isOverEdge = false;
+            timeSinceEdgeDetected = 0;
         }
     }
 
